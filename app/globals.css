@@ -32,6 +32,10 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    /* Degradado premium fucsia a turquesa */
+    background: linear-gradient(135deg, #4c1d95 0%, #0f172a 50%, #0d9488 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    @apply text-foreground;
   }
 }
