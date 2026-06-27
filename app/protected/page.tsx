@@ -1,45 +1,100 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { InfoIcon } from "lucide-react";
+import { FetchDataSteps } from "@/components/tutorial/fetch-data-steps";
+import { Suspense } from "react";
 
-export default async function ProtectedPage() {
+// Mantenemos esta función tal cual para no romper la lógica interna
+async function UserDetails() {
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-
-  if (error || !data?.user) {
-    return redirect("/auth/login");
+  const { data, error } = await supabase.auth.getClaims();
+  if (error || !data?.claims) {
+    redirect("/auth/login");
   }
+  return JSON.stringify(data.claims, null, 2);
+}
 
+export default function ProtectedPage() {
   return (
-    <div className="flex flex-col h-full gap-6 p-6">
-      {/* HEADER DE GESTION */}
-      <header className="flex justify-between items-center bg-card p-4 rounded-xl border border-border">
-        <h1 className="text-2xl font-bold">Sales & Billing</h1>
-      </header>
+    <div className="flex-1 w-full flex flex-col gap-6 p-2 md:p-6 bg-background">
+      {/* Mantenemos el aviso original pero con estilo integrado */}
+      <div className="w-full">
+        <div className="bg-card text-sm p-3 px-5 rounded-xl border border-border text-foreground flex gap-3 items-center opacity-80">
+          <InfoIcon size="16" strokeWidth={2} />
+          FRACTAL v1.0 | Panel de Gestión Protegido
+        </div>
+      </div>
 
-      {/* GRILLA PRINCIPAL */}
+      {/* Título Principal */}
+      <h1 className="text-3xl font-bold tracking-tight text-primary">Sales & Billing</h1>
+
+      {/* GRILLA PRINCIPAL - 2 COLUMNAS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1">
         
         {/* COLUMNA IZQUIERDA */}
         <div className="flex flex-col gap-6">
-          <section className="bg-card p-6 rounded-2xl border border-border h-[400px]">
-            <h2 className="text-xl font-bold mb-4">Product/Medication Search</h2>
-            {/* Aquí irán los items */}
+          {/* Arriba Izquierda: Buscador */}
+          <section className="bg-card p-6 rounded-3xl border border-border min-h-[350px] shadow-2xl">
+            <h2 className="text-xl font-bold mb-4 flex justify-between items-center">
+              Product/Medication Search
+              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full uppercase">Módulo activo</span>
+            </h2>
+            <div className="relative">
+               <input className="w-full bg-background border border-border rounded-xl p-3 text-sm" placeholder="Escanea o busca un producto..." />
+            </div>
+            {/* Espacio para la grilla de productos que vendrá luego */}
+            <div className="mt-6 grid grid-cols-3 gap-4 opacity-20 italic text-xs">
+               <div className="bg-background aspect-square rounded-xl border border-dashed border-border flex items-center justify-center">Producto A</div>
+               <div className="bg-background aspect-square rounded-xl border border-dashed border-border flex items-center justify-center">Producto B</div>
+               <div className="bg-background aspect-square rounded-xl border border-dashed border-border flex items-center justify-center">Producto C</div>
+            </div>
           </section>
-          <section className="bg-card p-6 rounded-2xl border border-border flex-1">
+
+          {/* Abajo Izquierda: Transacciones */}
+          <section className="bg-card p-6 rounded-3xl border border-border flex-1 shadow-2xl">
             <h2 className="text-xl font-bold mb-4">Recent Transactions</h2>
+            <div className="space-y-3 opacity-30 text-sm">
+              <div className="flex justify-between border-b border-border pb-2"><span>Jun 26, 2026 - Item A</span> <span>$14.50</span></div>
+              <div className="flex justify-between border-b border-border pb-2"><span>Jun 25, 2026 - Item B</span> <span>$22.00</span></div>
+            </div>
           </section>
         </div>
 
         {/* COLUMNA DERECHA */}
         <div className="flex flex-col gap-6">
-          <section className="bg-card p-6 rounded-2xl border border-border h-[300px]">
-            <h2 className="text-xl font-bold mb-4">Patient/Customer</h2>
+          {/* Arriba Derecha: Pacientes */}
+          <section className="bg-card p-6 rounded-3xl border border-border min-h-[250px] shadow-2xl">
+            <h2 className="text-xl font-bold mb-4 text-primary">Patient/Customer</h2>
+            <div className="grid grid-cols-2 gap-4">
+               <div className="h-10 bg-background rounded-lg border border-border"></div>
+               <div className="h-10 bg-background rounded-lg border border-border"></div>
+            </div>
           </section>
-          <section className="bg-card p-6 rounded-2xl border border-border flex-1">
+
+          {/* Abajo Derecha: Billing */}
+          <section className="bg-card p-6 rounded-3xl border border-border flex-1 shadow-2xl bg-gradient-to-br from-card to-card/50">
             <h2 className="text-xl font-bold mb-4">Current Bill</h2>
+            <div className="flex flex-col h-full">
+               <div className="flex-1 opacity-20 italic py-10 text-center">Lista de cobro vacía</div>
+               <div className="border-t border-border pt-4 mt-auto">
+                  <div className="flex justify-between text-2xl font-black mb-4">
+                     <span>TOTAL:</span>
+                     <span className="text-primary">$0.00</span>
+                  </div>
+                  <button className="w-full bg-primary text-primary-foreground font-bold py-4 rounded-2xl hover:opacity-90 transition-all uppercase tracking-widest">
+                     Pay & Print
+                  </button>
+               </div>
+            </div>
           </section>
         </div>
       </div>
+
+      {/* Mantenemos UserDetails y FetchDataSteps ocultos pero PRESENTES para que no rompa el Build */}
+      <footer className="mt-10 opacity-0 h-0 overflow-hidden">
+        <Suspense><UserDetails /></Suspense>
+        <FetchDataSteps />
+      </footer>
     </div>
   );
 }
