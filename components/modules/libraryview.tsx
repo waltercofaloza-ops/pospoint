@@ -1,6 +1,6 @@
 import { BookOpen, Bookmark, Tag } from "lucide-react";
 
-export function Libraryview() {
+export function LibraryView() {
   const books = [
     { id: 1, title: "Cien años de soledad", author: "G. García Márquez", genre: "Ficción", price: 22000 },
     { id: 2, title: "Sapiens", author: "Yuval Noah Harari", genre: "Ensayo", price: 18500 },
@@ -12,7 +12,7 @@ export function Libraryview() {
   return (
     <div className="p-6 bg-blue-950/10 border border-blue-500/20 rounded-3xl h-full">
       <div className="flex items-center justify-between mb-6">
-         <h2 className="text-2xl font-bold text-blue-400 flex items-center gap-3">
+        <h2 className="text-2xl font-bold text-blue-400 flex items-center gap-3">
             <BookOpen className="size-7" />
             Módulo Librería - Catálogo
         </h2>
