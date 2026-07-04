@@ -15,10 +15,20 @@ export function Header() {
         <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Blueprint Lab</span>
       </div>
 
-      {/* Selector de Rubros (Aquí le decimos al "cerebro" qué mostrar) */}
+      {/* Selector de Rubros */}
       <div className="flex gap-2">
-        <button onClick={() => setActiveModule('bluepos')} className="px-3 py-1 bg-secondary rounded text-xs">BluePOS</button>
-        <button onClick={() => setActiveModule('realestate')} className="px-3 py-1 bg-secondary rounded text-xs">RealEstate</button>
+        <button 
+          onClick={() => setActiveModule('restaurantview')} 
+          className="px-3 py-1 bg-secondary rounded text-xs hover:bg-secondary/80 transition-colors"
+        >
+          Restaurante
+        </button>
+        <button 
+          onClick={() => setActiveModule('libraryview')} 
+          className="px-3 py-1 bg-secondary rounded text-xs hover:bg-secondary/80 transition-colors"
+        >
+          Librería
+        </button>
       </div>
 
       {/* Botón VENDER (Condicional) */}
@@ -26,7 +36,7 @@ export function Header() {
         {activeView !== 'billing' && (
           <button 
             onClick={() => setActiveView('billing')}
-            className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-bold text-sm hover:opacity-90"
+            className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-bold text-sm hover:opacity-90 transition-all"
           >
             VENDER
           </button>
