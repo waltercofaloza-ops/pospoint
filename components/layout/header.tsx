@@ -3,9 +3,6 @@
 import { useHabitat } from "@/domain/habitatcontext";
 import Link from "next/link";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { Suspense } from "react";
-import { AuthButton } from "@/components/auth-button"; 
-
 
 export function Header() {
   const { activeView, setActiveView, setActiveModule } = useHabitat();
@@ -45,13 +42,6 @@ export function Header() {
           </button>
         )}
         <ThemeSwitcher />
-        
-        {/* Aquí está la clave: renderizado condicional con Suspense */}
-        <div className="flex items-center">
-            <Suspense fallback={<div className="w-20 h-8 animate-pulse bg-secondary rounded" />}>
-              <AuthButton />
-            </Suspense>
-        </div>
       </div>
     </header>
   );
