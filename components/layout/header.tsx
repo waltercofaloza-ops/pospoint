@@ -3,6 +3,8 @@
 import { useHabitat } from "@/domain/habitatcontext";
 import Link from "next/link";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+// Asegúrate de importar el componente que maneja la sesión (ajusta la ruta según lo que tengas)
+import { UserButton } from "@/components/user-button"; 
 
 export function Header() {
   const { activeView, setActiveView, setActiveModule } = useHabitat();
@@ -31,7 +33,7 @@ export function Header() {
         </button>
       </div>
 
-      {/* Botón VENDER (Condicional) */}
+      {/* Acciones (Vender, Sesión y Tema) */}
       <div className="flex items-center gap-4">
         {activeView !== 'billing' && (
           <button 
@@ -42,6 +44,7 @@ export function Header() {
           </button>
         )}
         <ThemeSwitcher />
+        <UserButton /> {/* Aquí debería estar el componente de tu sesión que eliminé por error */}
       </div>
     </header>
   );
