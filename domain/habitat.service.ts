@@ -1,5 +1,5 @@
 // domain/habitat.service.ts
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '../lib/supabase/client';
 import { HabitatNode } from './habitat.types';
 
 const supabase = createClient();
