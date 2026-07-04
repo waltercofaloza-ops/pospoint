@@ -10,11 +10,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Store, BookOpen } from "lucide-react";
-import { menurubro } from "@/domain/menurubro"; // nombre consistente
+import { ChevronDown, Store, BookOpen, Pill } from "lucide-react"; // Agregamos Pill
+import { menurubro } from "@/domain/menurubro";
 
 export function Header() {
   const { activeView, setActiveView, setActiveModule, activeModule } = useHabitat();
+
+  // Función auxiliar para obtener el ícono del rubro activo en el trigger
+  const getIconForModule = (module: string) => {
+    switch (module) {
+      case 'restaurantview': return <Store className="size-4" />;
+      case 'libraryview': return <BookOpen className="size-4" />;
+      case 'farmaview': return <Pill className="size-4" />;
+      default: return <Store className="size-4" />;
+    }
+  };
 
   return (
     <header className="w-full border-b border-border p-4 bg-card/80 backdrop-blur-md flex items-center gap-6">
@@ -30,8 +40,8 @@ export function Header() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="secondary" className="gap-2 capitalize">
-            {activeModule === 'restaurantview' ? <Store className="size-4" /> : <BookOpen className="size-4" />}
-            {activeModule === 'restaurantview' ? 'restaurante' : 'libreria'}
+            {getIconForModule(activeModule)}
+            {activeModule.replace('view', '')}
             <ChevronDown className="size-4 opacity-50" />
           </Button>
         </DropdownMenuTrigger>
@@ -41,6 +51,9 @@ export function Header() {
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setActiveModule('libraryview')}>
             <BookOpen className="mr-2 size-4" /> libreria
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setActiveModule('farmaview')}>
+            <Pill className="mr-2 size-4" /> farmacia
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
