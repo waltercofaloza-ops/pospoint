@@ -3,43 +3,54 @@
 import { useHabitat } from "@/domain/habitatcontext";
 import Link from "next/link";
 import { ThemeSwitcher } from "@/components/theme-switcher";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, Store, BookOpen } from "lucide-react";
 
 export function Header() {
-  const { activeView, setActiveView, setActiveModule } = useHabitat();
+  const { activeView, setActiveView, setActiveModule, activeModule } = useHabitat();
 
   return (
-    <header className="w-full border-b border-border p-4 bg-card/80 backdrop-blur-md flex justify-between items-center">
+    <header className="w-full border-b border-border p-4 bg-card/80 backdrop-blur-md flex items-center gap-6">
       {/* Marca */}
       <div className="flex flex-col">
         <Link href="/protected" className="font-bold text-lg text-primary leading-none">BluePOS</Link>
         <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Blueprint Lab</span>
       </div>
 
-      {/* Selector de Rubros */}
-      <div className="flex gap-2">
-        <button 
-          onClick={() => setActiveModule('restaurantview')} 
-          className="px-3 py-1 bg-secondary rounded text-xs hover:bg-secondary/80 transition-colors"
-        >
-          Restaurante
-        </button>
-        <button 
-          onClick={() => setActiveModule('libraryview')} 
-          className="px-3 py-1 bg-secondary rounded text-xs hover:bg-secondary/80 transition-colors"
-        >
-          Librería
-        </button>
-      </div>
+      {/* Selector de Rubros (Dropdown que reemplaza los botones largos) */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="secondary" className="gap-2">
+            {activeModule === 'restaurantview' ? <Store className="size-4" /> : <BookOpen className="size-4" />}
+            {activeModule === 'restaurantview' ? 'Restaurante' : 'Librería'}
+            <ChevronDown className="size-4 opacity-50" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start">
+          <DropdownMenuItem onClick={() => setActiveModule('restaurantview')}>
+            <Store className="mr-2 size-4" /> Restaurante
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setActiveModule('libraryview')}>
+            <BookOpen className="mr-2 size-4" /> Librería
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Espacio vacío para empujar las acciones a la derecha */}
+      <div className="flex-1" />
 
       {/* Acciones */}
       <div className="flex items-center gap-4">
         {activeView !== 'billing' && (
-          <button 
-            onClick={() => setActiveView('billing')}
-            className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-bold text-sm hover:opacity-90 transition-all"
-          >
+          <Button onClick={() => setActiveView('billing')} className="font-bold">
             VENDER
-          </button>
+          </Button>
         )}
         <ThemeSwitcher />
       </div>
