@@ -6,6 +6,7 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Suspense } from "react";
 import { AuthButton } from "@/components/auth-button"; 
 
+
 export function Header() {
   const { activeView, setActiveView, setActiveModule } = useHabitat();
 
