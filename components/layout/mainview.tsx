@@ -4,7 +4,6 @@ import { useHabitat } from "@/domain/habitatcontext";
 import { RestaurantView } from "@/components/modules/restaurantview";
 import { LibraryView } from "@/components/modules/libraryview";
 
-// IMPORTANTE: Definimos la interfaz para aceptar children
 interface MainViewProps {
   children: React.ReactNode;
 }
@@ -14,11 +13,11 @@ export function MainView({ children }: MainViewProps) {
 
   return (
     <main className="flex-1 w-full max-w-7xl mx-auto p-6">
-      {/* Si hay un módulo activo, mostramos el componente correspondiente */}
-      {activeModule === 'restaurant' && <RestaurantView />}
-      {activeModule === 'library' && <LibraryView />}
+      {/* Usamos los identificadores que coinciden con el Header */}
+      {activeModule === 'restaurantview' && <RestaurantView />}
+      {activeModule === 'libraryview' && <LibraryView />}
       
-      {/* Si NO hay módulo seleccionado, mostramos lo que venía en page.tsx (children) */}
+      {/* Si NO hay módulo seleccionado, mostramos el contenido original */}
       {!activeModule && children}
     </main>
   );
