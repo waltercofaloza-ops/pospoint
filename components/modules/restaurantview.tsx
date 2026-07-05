@@ -1,11 +1,10 @@
-import { LayoutGrid, Users, Clock, UtensilsCrossed } from "lucide-react";
+"use client";
 
-export function Restaurantview()
- {
+export function RestaurantView() {
   return (
-    <div className="p-6 bg-slate-900 rounded-3xl border border-blue-500">
-      <h2 className="text-2xl font-bold text-blue-400">Sistema de comer</h2>
-      <p className="text-white mt-4">El módulo está cargando correctamente.</p>
+    <div className="p-8 bg-orange-950/20 border border-orange-500/20 rounded-3xl">
+      <h1 className="text-3xl font-bold text-orange-400">Sistema de Restaurante</h1>
+      <p className="text-white mt-4">Gestión de mesas y comandas.</p>
     </div>
   );
 }
