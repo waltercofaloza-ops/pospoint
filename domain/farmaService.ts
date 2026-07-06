@@ -1,12 +1,13 @@
-// services/farmaService.ts
+import { createClient } from "@/lib/supabase/client";
+
+const supabase = createClient();
+
 export const farmaService = {
   async buscarProducto(termino: string) {
     if (!termino) return [];
     
-    // Convertimos a minúsculas para comparar mejor
     const term = termino.toLowerCase();
     
-    // Usamos .or para buscar en los 3 campos simultáneamente
     const { data, error } = await supabase
       .from('habitat')
       .select('id, data')
@@ -17,7 +18,11 @@ export const farmaService = {
       )
       .limit(10);
       
-    if (error) console.error("Error en búsqueda:", error);
+    if (error) {
+      console.error("Error en búsqueda:", error);
+      return [];
+    }
+    
     return data || [];
   }
 };
