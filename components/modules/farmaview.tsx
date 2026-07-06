@@ -1,12 +1,28 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { farmaService } from "@/services/farmaService";
 
 export function Farmaview() {
   const [cart, setCart] = useState([]);
   const [obraSocial, setObraSocial] = useState(""); 
-  // Estado para controlar si el modal está abierto o cerrado
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [resultados, setResultados] = useState([]);
+
+  // Lógica de búsqueda con Debounce (300ms) para no saturar
+  useEffect(() => {
+    const delayDebounce = setTimeout(async () => {
+      if (searchTerm.length >= 2) {
+        const data = await farmaService.buscarProducto(searchTerm);
+        setResultados(data);
+      } else {
+        setResultados([]);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
 
   // Captura de atajos de teclado
   useEffect(() => {
@@ -18,7 +34,7 @@ export function Farmaview() {
         document.getElementById("search-input")?.focus(); 
       }
       // F9 para abrir la búsqueda extendida
-       if (e.key === 'F9') {
+      if (e.key === 'F9') {
         e.preventDefault();
         setIsModalOpen(prev => !prev);
       }
@@ -33,17 +49,34 @@ export function Farmaview() {
         {/* Columna Izquierda: Buscador y Tabla */}
         <div className="xl:col-span-2 space-y-6">
           {/* Buscador Modificado */}
-          <div className="bg-slate-900 p-3 rounded-2xl border border-slate-800 flex items-center gap-3 shadow-inner">
+          <div className="relative bg-slate-900 p-3 rounded-2xl border border-slate-800 flex items-center gap-3 shadow-inner">
             <svg className="w-5 h-5 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-            <input id="search-input" className="flex-1 bg-transparent text-white outline-none text-sm" placeholder="Ctrl+B para buscar (comercial o genérico)..." />
+            <input 
+              id="search-input" 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1 bg-transparent text-white outline-none text-sm" 
+              placeholder="Ctrl+B para buscar (comercial o genérico)..." 
+            />
             
-            {/* Botón de Búsqueda Extendida (A la derecha dentro del input) */}
+            {/* Dropdown de Resultados */}
+            {resultados.length > 0 && (
+              <div className="absolute top-16 left-0 w-full bg-slate-950 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden">
+                {resultados.map((res: any) => (
+                  <div key={res.id} className="p-3 hover:bg-emerald-900/50 cursor-pointer text-white flex justify-between border-b border-slate-800">
+                    <span className="font-medium">{res.data.nombre}</span>
+                    <span className="text-emerald-400 font-bold">${res.data.precio_lista}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* Botón de Búsqueda Extendida */}
             <button 
               onClick={() => setIsModalOpen(true)}
               title="Búsqueda Avanzada (F9)"
               className="flex items-center gap-2 px-3 py-1.5 bg-emerald-950/50 text-emerald-300 rounded-lg hover:bg-emerald-900 border border-emerald-800 text-xs font-medium transition-colors"
             >
-              {/* SVG de Píldora + Lupa (Dibujado a mano) */}
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="m15.1 18.1-1.3-1.3"/><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M7 11a4 4 0 0 1 4-4 4 4 0 0 1 4 4"/>
               </svg>
@@ -51,10 +84,9 @@ export function Farmaview() {
             </button>
           </div>
 
-          {/* Tabla de Detalles de Venta (Sin cambios) */}
+          {/* Tabla de Detalles de Venta */}
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 h-[calc(100%-80px)] overflow-y-auto">
             <table className="w-full text-left text-sm text-slate-300">
-                {/* ... cabecera y cuerpo de la tabla ... */}
                  <thead className="text-emerald-500 uppercase border-b border-slate-800 sticky top-0 bg-slate-900 z-10">
                   <tr>
                     <th className="pb-3">Producto</th>
@@ -79,9 +111,8 @@ export function Farmaview() {
           </div>
         </div>
 
-        {/* Columna Derecha: Cliente y Checkout (Sin cambios) */}
+        {/* Columna Derecha: Cliente y Checkout */}
         <div className="bg-slate-900 p-6 rounded-3xl border border-emerald-900/50 flex flex-col gap-6">
-          {/* Panel Cliente Detallado */}
           <div className="space-y-4">
             <h4 className="text-xs font-bold text-slate-500 uppercase">Datos del Cliente</h4>
             <div className="grid grid-cols-2 gap-3">
@@ -138,14 +169,13 @@ export function Farmaview() {
             
             {/* Cuerpo del Modal (Filtros y Resultados) */}
             <div className="flex-1 p-6 space-y-6 overflow-y-auto bg-slate-900">
-              {/* Filtros Avanzados */}
               <div className="grid grid-cols-3 gap-4 p-4 bg-slate-950 rounded-xl border border-slate-700">
                  <input placeholder="Monodroga (ej. Paracetamol)" className="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white" />
                  <input placeholder="Laboratorio" className="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white" />
                  <input placeholder="Troquel" className="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white" />
               </div>
 
-              {/* Área de Resultados (Simulada) */}
+              {/* Área de Resultados */}
               <div className="border border-slate-700 rounded-xl overflow-hidden bg-slate-950">
                 <table className="w-full text-left text-sm text-slate-300">
                   <thead className="text-emerald-500 uppercase border-b border-slate-700 bg-slate-900">
