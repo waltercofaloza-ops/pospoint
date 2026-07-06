@@ -4,11 +4,18 @@ import { useState, useEffect } from "react";
 import { farmaService } from "@/domain/farmaService";
 
 export function Farmaview() {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState<any[]>([]);
   const [obraSocial, setObraSocial] = useState(""); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [resultados, setResultados] = useState<any[]>([]);
+
+  // Lógica para agregar al carrito
+  const agregarAlCarrito = (producto: any) => {
+    setCart((prev) => [...prev, producto]);
+    setSearchTerm("");
+    setResultados([]);
+  };
 
   // Lógica de búsqueda con Debounce (300ms) para no saturar
   useEffect(() => {
@@ -63,7 +70,11 @@ export function Farmaview() {
             {resultados.length > 0 && (
               <div className="absolute top-16 left-0 w-full bg-slate-950 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden">
                 {resultados.map((res: any) => (
-                  <div key={res.id} className="p-3 hover:bg-emerald-900/50 cursor-pointer text-white flex justify-between border-b border-slate-800">
+                  <div 
+                    key={res.id} 
+                    onClick={() => agregarAlCarrito(res)}
+                    className="p-3 hover:bg-emerald-900/50 cursor-pointer text-white flex justify-between border-b border-slate-800"
+                  >
                     <span className="font-medium">{res.data.nombre}</span>
                     <span className="text-emerald-400 font-bold">${res.data.precio_lista}</span>
                   </div>
@@ -97,15 +108,23 @@ export function Farmaview() {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-slate-800/50">
-                    <td className="py-4 font-medium text-white">Ibuprofeno 400mg</td>
-                    <td className="text-center">
-                      <input type="number" className="w-16 bg-slate-950 border border-slate-700 rounded p-1 text-center text-white text-sm" placeholder="1" />
-                    </td>
-                    <td>$35.50</td>
-                    <td className="text-emerald-400">-$10.00</td>
-                    <td className="font-bold text-white">$25.50</td>
-                  </tr>
+                  {cart.length > 0 ? (
+                    cart.map((item, index) => (
+                      <tr key={index} className="border-b border-slate-800/50">
+                        <td className="py-4 font-medium text-white">{item.data.nombre}</td>
+                        <td className="text-center">
+                          <input type="number" defaultValue={1} className="w-16 bg-slate-950 border border-slate-700 rounded p-1 text-center text-white text-sm" />
+                        </td>
+                        <td>${item.data.precio_lista}</td>
+                        <td className="text-emerald-400">-$0.00</td>
+                        <td className="font-bold text-white">${item.data.precio_lista}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr className="border-b border-slate-800/50">
+                      <td className="py-4 text-slate-500" colSpan={5}>No hay productos agregados...</td>
+                    </tr>
+                  )}
                 </tbody>
             </table>
           </div>
@@ -141,7 +160,9 @@ export function Farmaview() {
           <div className="mt-auto border-t border-slate-800 pt-6">
               <div className="flex justify-between items-center mb-6">
                   <span className="text-slate-400">Total a Pagar</span>
-                  <span className="text-3xl font-bold text-white">$25.50</span>
+                  <span className="text-3xl font-bold text-white">
+                    ${cart.reduce((acc, curr) => acc + Number(curr.data.precio_lista), 0).toFixed(2)}
+                  </span>
               </div>
               <button className="w-full py-4 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-500 transition-all">
                 PAGAR (F8)
